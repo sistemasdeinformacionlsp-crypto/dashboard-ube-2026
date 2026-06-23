@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard UBE Recepción 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f4f6f9; color: #333; padding: 24px; }
+  h1 { font-size: 22px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 24px; }
+  .metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .metric { background: #fff; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .metric-label { font-size: 12px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric-value { font-size: 28px; font-weight: 700; color: #1a1a2e; }
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .full-width { grid-column: 1 / -1; }
+  .chart-title { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; font-size: 12px; color: #666; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .btn-download { display: inline-block; margin-top: 12px; padding: 6px 14px; font-size: 12px; background: #f0f4ff; color: #3266ad; border: 1px solid #c5d5f5; border-radius: 6px; cursor: pointer; text-decoration: none; }
+  .btn-download:hover { background: #dce8ff; }
+  @media (max-width: 700px) {
+    .metric-row { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Dashboard UBE — Recepción de Muestras 2026</h1>
+<p class="subtitle">Registro de entomología vectorial | Departamento del Cauca</p>
+
+<div class="metric-row">
+  <div class="metric"><div class="metric-label">Total muestras</div><div class="metric-value">453</div></div>
+  <div class="metric"><div class="metric-label">Municipios</div><div class="metric-value">29</div></div>
+  <div class="metric"><div class="metric-label">Especímenes</div><div class="metric-value">2.547</div></div>
+  <div class="metric"><div class="metric-label">Géneros identificados</div><div class="metric-value">5</div></div>
+</div>
+
+<div class="charts-grid">
+
+  <div class="chart-card full-width">
+    <div class="chart-title">Muestras por municipio (top 15)</div>
+    <div class="legend">
+      <span><span class="leg-sq" style="background:#378ADD"></span>N° muestras</span>
+    </div>
+    <div style="position:relative;width:100%;height:360px;">
+      <canvas id="c1"></canvas>
+    </div>
+    <button class="btn-download" onclick="downloadChart('c1','muestras_por_municipio')">⬇ Descargar imagen</button>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Género del vector</div>
+    <div class="legend">
+      <span><span class="leg-sq" style="background:#378ADD"></span>Aedes 82%</span>
+      <span><span class="leg-sq" style="background:#1D9E75"></span>Sabethes 15%</span>
+      <span><span class="leg-sq" style="background:#BA7517"></span>Anopheles 2%</span>
+      <span><span class="leg-sq" style="background:#D4537E"></span>Otros 1%</span>
+    </div>
+    <div style="position:relative;width:100%;height:260px;">
+      <canvas id="c2"></canvas>
+    </div>
+    <button class="btn-download" onclick="downloadChart('c2','genero_vector')">⬇ Descargar imagen</button>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Muestras por mes</div>
+    <div class="legend">
+      <span><span class="leg-sq" style="background:#3B6D11"></span>Muestras ingresadas</span>
+    </div>
+    <div style="position:relative;width:100%;height:260px;">
+      <canvas id="c3"></canvas>
+    </div>
+    <button class="btn-download" onclick="downloadChart('c3','muestras_por_mes')">⬇ Descargar imagen</button>
+  </div>
+
+  <div class="chart-card full-width">
+    <div class="chart-title">Especímenes por municipio (top 15)</div>
+    <div class="legend">
+      <span><span class="leg-sq" style="background:#534AB7"></span>Total especímenes colectados</span>
+    </div>
+    <div style="position:relative;width:100%;height:360px;">
+      <canvas id="c4"></canvas>
+    </div>
+    <button class="btn-download" onclick="downloadChart('c4','especimenes_por_municipio')">⬇ Descargar imagen</button>
+  </div>
+
+  <div class="chart-card full-width">
+    <div class="chart-title">Tipo de vigilancia</div>
+    <div class="legend">
+      <span><span class="leg-sq" style="background:#378ADD"></span>Vigilancia Aedes 82%</span>
+      <span><span class="leg-sq" style="background:#1D9E75"></span>Fiebre Amarilla 15%</span>
+      <span><span class="leg-sq" style="background:#BA7517"></span>Anopheles 2%</span>
+      <span><span class="leg-sq" style="background:#D4537E"></span>Leishmaniasis 1%</span>
+      <span><span class="leg-sq" style="background:#888780"></span>Garrapatas &lt;1%</span>
+    </div>
+    <div style="position:relative;width:100%;height:220px;">
+      <canvas id="c5"></canvas>
+    </div>
+    <button class="btn-download" onclick="downloadChart('c5','tipo_vigilancia')">⬇ Descargar imagen</button>
+  </div>
+
+</div>
+
+<p style="margin-top:24px;font-size:11px;color:#aaa;text-align:center;">Generado con datos de recepción UBE 2026 — Departamento del Cauca</p>
+
+<script>
+function downloadChart(id, name) {
+  const canvas = document.getElementById(id);
+  const link = document.createElement('a');
+  link.download = name + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+const munis = ['Piamonte','Guapi','Caloto','Stder Quilichao','Miranda','Mercaderes','Guachene','Timbiqui','Paez','Villa Rica','Puerto Tejada','Patia','Patia-Bordo','Buenos Aires','Argelia'];
+
+new Chart(document.getElementById('c1'), {
+  type: 'bar',
+  data: {
+    labels: munis,
+    datasets: [{ label: 'Muestras', data: [60,41,38,27,25,25,23,20,19,18,15,15,14,14,14], backgroundColor: '#378ADD', borderRadius: 4, borderSkipped: false }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('c2'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Aedes','Sabethes','Anopheles','Otros'],
+    datasets: [{ data: [372,70,7,4], backgroundColor: ['#378ADD','#1D9E75','#BA7517','#D4537E'], borderWidth: 2, borderColor: '#fff' }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '60%',
+    plugins: { legend: { display: false } }
+  }
+});
+
+new Chart(document.getElementById('c3'), {
+  type: 'bar',
+  data: {
+    labels: ['Enero','Febrero','Marzo','Abril','Mayo','Junio'],
+    datasets: [{ label: 'Muestras', data: [33,42,212,40,53,17], backgroundColor: '#3B6D11', borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 }, autoSkip: false } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('c4'), {
+  type: 'bar',
+  data: {
+    labels: ['Piamonte','Guapi','Caloto','Guachene','Mercaderes','Miranda','Patia-Bordo','Patia','Timbiqui','Stder Quilichao','Paez','Puerto Tejada','Buenos Aires','Corinto','Bolivar'],
+    datasets: [{ label: 'Especímenes', data: [265,264,247,164,130,92,91,89,76,68,68,64,61,52,49], backgroundColor: '#534AB7', borderRadius: 4, borderSkipped: false }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('c5'), {
+  type: 'bar',
+  data: {
+    labels: ['Vigilancia Aedes','Fiebre Amarilla','Vigilancia Anopheles','Leishmaniasis','Garrapatas'],
+    datasets: [{ label: 'Muestras', data: [372,70,7,3,1], backgroundColor: ['#378ADD','#1D9E75','#BA7517','#D4537E','#888780'], borderRadius: 4 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { size: 11 }, autoSkip: false, maxRotation: 15 } },
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+</script>
+</body>
+</html>
